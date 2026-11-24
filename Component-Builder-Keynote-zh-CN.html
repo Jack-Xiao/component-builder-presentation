@@ -115,6 +115,23 @@
     .pill.green { background: var(--green-soft); color: var(--green); border-color: transparent; }
     .pill.amber { background: var(--amber-soft); color: var(--amber); border-color: transparent; }
     .pill.rose { background: var(--rose-soft); color: var(--rose); border-color: transparent; }
+    .pill.skill {
+      display: inline-flex; align-items: center; gap: 7px; font-family: "SF Mono", Menlo, monospace;
+      background: var(--accent-soft); color: var(--text); border-color: var(--accent);
+    }
+    .s-tag {
+      font-size: 10px; font-weight: 900; letter-spacing: 0.06em; padding: 2px 6px;
+      border-radius: 5px; background: var(--accent); color: #fff; font-family: system-ui, sans-serif;
+    }
+    .agent-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: linear-gradient(135deg, #6366f1, #10b981); color: #fff;
+      font-size: 11px; font-weight: 900; letter-spacing: 0.08em;
+      padding: 3px 9px; border-radius: 99px; text-transform: uppercase;
+    }
+    .agent-badge.lg { font-size: 13px; padding: 6px 14px; box-shadow: 0 6px 20px rgba(99,102,241,0.35); }
+    .hero-id { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+    .hero-name { font-size: clamp(22px, 2.4vw, 30px); font-weight: 900; letter-spacing: -0.02em; }
     .node-btn {
       background: var(--card); border: 1px solid var(--border); border-radius: 14px;
       padding: 16px 10px; text-align: center; cursor: pointer; color: var(--text); transition: 0.18s;
@@ -147,7 +164,7 @@
 <body>
 <div class="app" id="app" data-theme="dark">
   <header class="topbar">
-    <div class="brand"><span class="logo">CB</span>Component Builder</div>
+    <div class="brand"><span class="logo">CB</span>Component Builder <span class="agent-badge">AGENT</span></div>
     <div class="actions">
       <button class="btn" id="themeBtn" onclick="toggleTheme()">浅色模式</button>
       <a class="btn" href="./Component-Builder-Keynote-en.html">English →</a>
@@ -158,16 +175,19 @@
     <!-- Slide 01: 封面 -->
     <section class="slide active">
       <div>
-        <div class="kicker">Android Compose · 全自动组件研发 Agent</div>
+        <div class="hero-id">
+          <span class="hero-name">Component Builder</span>
+          <span class="agent-badge lg">🤖 AI AGENT · 全自动组件研发智能体</span>
+        </div>
         <h1>给一个 Figma 节点链接<br/><span style="color:var(--accent)">交付一个可直接合入的 PR</span></h1>
-        <p class="sub">不止写代码——自动跑通测试、像素级对比自愈、贴图验真与独立评审。</p>
+        <p class="sub">由 <strong>Component Builder Agent</strong> 自主编排多种 Skill，跑通编码、测试、像素纠偏、贴图与独立评审。</p>
       </div>
 
       <div class="flow-5">
-        <div class="box"><span class="icon">🎨</span><span class="title-sm">读设计</span><span class="muted-sm">锁定精确节点与状态</span></div>
+        <div class="box"><span class="icon">🎨</span><span class="title-sm">读设计</span><span class="muted-sm">锁定精确节点与状态</span><span class="pill skill" style="width:fit-content;padding:4px 9px;font-size:11px;"><b class="s-tag">SKILL</b>figma-tools</span></div>
         <div class="box"><span class="icon">🧩</span><span class="title-sm">写组件</span><span class="muted-sm">Compose + 预览 + KDoc</span></div>
         <div class="box"><span class="icon">📱</span><span class="title-sm">跑测试</span><span class="muted-sm">真机交互 + 宿主快照</span></div>
-        <div class="box accent"><span class="icon">🔍</span><span class="title-sm">修像素</span><span class="muted-sm">三栏比对 · 自动纠偏</span></div>
+        <div class="box accent"><span class="icon">🔍</span><span class="title-sm">修像素</span><span class="muted-sm">三栏比对 · 自动纠偏</span><span class="pill skill" style="width:fit-content;padding:4px 9px;font-size:11px;"><b class="s-tag">SKILL</b>visual-compare</span></div>
         <div class="box green"><span class="icon">🛡️</span><span class="title-sm">提评审</span><span class="muted-sm">网页贴图 + 独立 Agent 审</span></div>
       </div>
 
@@ -200,7 +220,7 @@
           <div class="title-sm" id="pTitle" style="font-size:21px;">01 · 读取精确 Figma 节点并建 story/ 分支</div>
           <div class="muted-sm" id="pDesc" style="margin-top:6px;font-size:15px;">拒绝模糊整库链接；不动本地无关代码；改旧组件前先截旧图留底。</div>
         </div>
-        <span class="pill" id="pTool" style="font-family:monospace;">figma-tools · git</span>
+        <div class="pills" id="pTool"><span class="pill skill"><b class="s-tag">SKILL</b>figma-tools</span><span class="pill" style="font-family:monospace;">git</span></div>
       </div>
     </section>
 
@@ -216,7 +236,7 @@
           <span class="big-num" style="color:var(--accent)">01</span>
           <span class="title-sm">精确节点 + 安全分支</span>
           <div class="pills" style="margin-top:6px;">
-            <span class="pill">锁定 node-id 与版本</span>
+            <span class="pill skill"><b class="s-tag">SKILL</b>figma-tools</span>
             <span class="pill">新建 story/* 分支</span>
             <span class="pill amber">绝不擅自 stash 本地改动</span>
           </div>
@@ -249,7 +269,10 @@
     <section class="slide">
       <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;">
         <div>
-          <div class="kicker">Visual Compare · 像素级对比</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
+            <div class="kicker" style="margin-bottom:0;">Visual Compare · 像素级对比</div>
+            <span class="pill skill"><b class="s-tag">SKILL</b>visual-compare</span>
+          </div>
           <h2>三栏并排对比，几像素偏移一眼看穿</h2>
         </div>
         <div class="actions">
@@ -413,20 +436,20 @@
   let cur = 0;
 
   const phases = [
-    ['01 · 读取精确 Figma 节点并建 story/ 分支', '拒绝模糊整库链接；不动本地无关代码；改旧组件前先截旧图留底。', 'figma-tools · git'],
-    ['02 · 实现真实 Compose 组件、预览与 KDoc', '保持 API 兼容；覆盖无障碍、RTL、长文本、大字号与深浅主题。', 'Compose · KDoc'],
-    ['03 · 跑通 Android 真机测试与宿主快照', '切换 JDK 17 + SDK 35；跑真机交互与构建检查；基线录制单独授权。', 'androidTest · Paparazzi'],
-    ['04 · 逐个状态生成三栏像素对比图', '并排展示 Figma 原稿、Paparazzi 渲染与放大差异图，严禁拉伸裁剪。', 'visual-compare'],
-    ['05 · 自动定位根因并迭代修复视觉偏差', '复用设计 Token 修根因并复查兄弟状态；连续 2 轮无改善自动停手求助。', 'Max 2-Pass Loop'],
-    ['06 · 创建标准 PR 并用浏览器贴图验真', '通过企业版 GitHub 网页把对比图贴进正文，重新打开校验比例与解码像素。', 'GHES Browser UI'],
-    ['07 · 唤醒独立子 Agent 完成只读代码评审', '针对同一 Commit 自动发布客观评审意见，绝不自己审批通过。', 'pr-review Subagent']
+    ['01 · 读取精确 Figma 节点并建 story/ 分支', '拒绝模糊整库链接；不动本地无关代码；改旧组件前先截旧图留底。', '<span class="pill skill"><b class="s-tag">SKILL</b>figma-tools</span><span class="pill" style="font-family:monospace">git</span>'],
+    ['02 · 实现真实 Compose 组件、预览与 KDoc', '保持 API 兼容；覆盖无障碍、RTL、长文本、大字号与深浅主题。', '<span class="pill" style="font-family:monospace">Compose · KDoc</span>'],
+    ['03 · 跑通 Android 真机测试与宿主快照', '切换 JDK 17 + SDK 35；跑真机交互与构建检查；基线录制单独授权。', '<span class="pill" style="font-family:monospace">androidTest · Paparazzi</span>'],
+    ['04 · 逐个状态生成三栏像素对比图', '并排展示 Figma 原稿、Paparazzi 渲染与放大差异图，严禁拉伸裁剪。', '<span class="pill skill"><b class="s-tag">SKILL</b>visual-compare</span>'],
+    ['05 · 自动定位根因并迭代修复视觉偏差', '复用设计 Token 修根因并复查兄弟状态；连续 2 轮无改善自动停手求助。', '<span class="pill" style="font-family:monospace">Max 2-Pass Loop</span>'],
+    ['06 · 创建标准 PR 并用浏览器贴图验真', '通过企业版 GitHub 网页把对比图贴进正文，重新打开校验比例与解码像素。', '<span class="pill" style="font-family:monospace">GHES Browser UI</span>'],
+    ['07 · 唤醒独立子 Agent 完成只读代码评审', '针对同一 Commit 自动发布客观评审意见，绝不自己审批通过。', '<span class="pill skill"><b class="s-tag">SKILL</b>pr-review</span><span class="pill">Subagent</span>']
   ];
 
   function pick(i) {
     document.querySelectorAll('.node-btn').forEach((b, k) => b.classList.toggle('sel', k === i));
     document.getElementById('pTitle').textContent = phases[i][0];
     document.getElementById('pDesc').textContent = phases[i][1];
-    document.getElementById('pTool').textContent = phases[i][2];
+    document.getElementById('pTool').innerHTML = phases[i][2];
   }
 
   function setDiff(fixed) {

@@ -115,6 +115,23 @@
     .pill.green { background: var(--green-soft); color: var(--green); border-color: transparent; }
     .pill.amber { background: var(--amber-soft); color: var(--amber); border-color: transparent; }
     .pill.rose { background: var(--rose-soft); color: var(--rose); border-color: transparent; }
+    .pill.skill {
+      display: inline-flex; align-items: center; gap: 7px; font-family: "SF Mono", Menlo, monospace;
+      background: var(--accent-soft); color: var(--text); border-color: var(--accent);
+    }
+    .s-tag {
+      font-size: 10px; font-weight: 900; letter-spacing: 0.06em; padding: 2px 6px;
+      border-radius: 5px; background: var(--accent); color: #fff; font-family: system-ui, sans-serif;
+    }
+    .agent-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: linear-gradient(135deg, #6366f1, #10b981); color: #fff;
+      font-size: 11px; font-weight: 900; letter-spacing: 0.08em;
+      padding: 3px 9px; border-radius: 99px; text-transform: uppercase;
+    }
+    .agent-badge.lg { font-size: 13px; padding: 6px 14px; box-shadow: 0 6px 20px rgba(99,102,241,0.35); }
+    .hero-id { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+    .hero-name { font-size: clamp(22px, 2.4vw, 30px); font-weight: 900; letter-spacing: -0.02em; }
     .node-btn {
       background: var(--card); border: 1px solid var(--border); border-radius: 14px;
       padding: 16px 10px; text-align: center; cursor: pointer; color: var(--text); transition: 0.18s;
@@ -147,7 +164,7 @@
 <body>
 <div class="app" id="app" data-theme="dark">
   <header class="topbar">
-    <div class="brand"><span class="logo">CB</span>Component Builder</div>
+    <div class="brand"><span class="logo">CB</span>Component Builder <span class="agent-badge">AGENT</span></div>
     <div class="actions">
       <button class="btn" id="themeBtn" onclick="toggleTheme()">Light Mode</button>
       <a class="btn" href="./Component-Builder-Keynote-zh-CN.html">中文版 →</a>
@@ -158,16 +175,19 @@
     <!-- Slide 01: Hero -->
     <section class="slide active">
       <div>
-        <div class="kicker">Android Compose · Autonomous Delivery Agent</div>
+        <div class="hero-id">
+          <span class="hero-name">Component Builder</span>
+          <span class="agent-badge lg">🤖 AI AGENT · Autonomous UI Engineer</span>
+        </div>
         <h1>One Figma Link In.<br/><span style="color:var(--accent)">One Review-Ready PR Out.</span></h1>
-        <p class="sub">Builds Compose UI, runs Android tests, fixes pixel drift, attaches proof, and runs an independent review.</p>
+        <p class="sub">An autonomous <strong>Agent</strong> that orchestrates specialized Skills to build Compose UI, run tests, fix pixel drift, attach proof, and trigger an independent review.</p>
       </div>
 
       <div class="flow-5">
-        <div class="box"><span class="icon">🎨</span><span class="title-sm">Read Node</span><span class="muted-sm">Pin exact Figma states</span></div>
+        <div class="box"><span class="icon">🎨</span><span class="title-sm">Read Node</span><span class="muted-sm">Pin exact Figma states</span><span class="pill skill" style="width:fit-content;padding:4px 9px;font-size:11px;"><b class="s-tag">SKILL</b>figma-tools</span></div>
         <div class="box"><span class="icon">🧩</span><span class="title-sm">Build UI</span><span class="muted-sm">Compose + Previews + KDoc</span></div>
         <div class="box"><span class="icon">📱</span><span class="title-sm">Run Tests</span><span class="muted-sm">Device + Paparazzi shots</span></div>
-        <div class="box accent"><span class="icon">🔍</span><span class="title-sm">Fix Pixels</span><span class="muted-sm">3-panel diff &amp; self-heal</span></div>
+        <div class="box accent"><span class="icon">🔍</span><span class="title-sm">Fix Pixels</span><span class="muted-sm">3-panel diff &amp; self-heal</span><span class="pill skill" style="width:fit-content;padding:4px 9px;font-size:11px;"><b class="s-tag">SKILL</b>visual-compare</span></div>
         <div class="box green"><span class="icon">🛡️</span><span class="title-sm">Ship &amp; Audit</span><span class="muted-sm">Web upload + 2nd Agent</span></div>
       </div>
 
@@ -200,7 +220,7 @@
           <div class="title-sm" id="pTitle" style="font-size:21px;">01 · Pin Exact Figma Node &amp; Branch Safely</div>
           <div class="muted-sm" id="pDesc" style="margin-top:6px;font-size:15px;">Rejects vague library links, protects uncommitted work, and captures Before states first.</div>
         </div>
-        <span class="pill" id="pTool" style="font-family:monospace;">figma-tools · git</span>
+        <div class="pills" id="pTool"><span class="pill skill"><b class="s-tag">SKILL</b>figma-tools</span><span class="pill" style="font-family:monospace;">git</span></div>
       </div>
     </section>
 
@@ -216,7 +236,7 @@
           <span class="big-num" style="color:var(--accent)">01</span>
           <span class="title-sm">Exact Node &amp; Branch</span>
           <div class="pills" style="margin-top:6px;">
-            <span class="pill">Pin node-id &amp; version</span>
+            <span class="pill skill"><b class="s-tag">SKILL</b>figma-tools</span>
             <span class="pill">Create story/* branch</span>
             <span class="pill amber">Never auto-stash dirty files</span>
           </div>
@@ -249,7 +269,10 @@
     <section class="slide">
       <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;">
         <div>
-          <div class="kicker">Visual Compare · Pixel Truth</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
+            <div class="kicker" style="margin-bottom:0;">Visual Compare · Pixel Truth</div>
+            <span class="pill skill"><b class="s-tag">SKILL</b>visual-compare</span>
+          </div>
           <h2>3-Column Diff Catches Every Misaligned Pixel</h2>
         </div>
         <div class="actions">
@@ -413,20 +436,20 @@
   let cur = 0;
 
   const phases = [
-    ['01 · Pin Exact Figma Node & Branch Safely', 'Rejects vague library links, protects uncommitted work, and captures Before states first.', 'figma-tools · git'],
-    ['02 · Build Real Compose UI, Previews & KDoc', 'Preserves API stability; covers a11y, RTL, long text, font scale, and themes.', 'Compose · KDoc'],
-    ['03 · Run Device Tests & Host Screenshots', 'Uses JDK 17 + SDK 35; runs androidTest & lint checks; keeps baseline auth separate.', 'androidTest · Paparazzi'],
-    ['04 · Generate 3-Column Pixel Diff Per State', 'Places Figma reference, Paparazzi render, and amplified diff side by side.', 'visual-compare'],
-    ['05 · Self-Heal Root Causes with 2-Pass Stop', 'Fixes tokens/spacing and rechecks sibling states; stops after 2 non-improving passes.', 'Max 2-Pass Loop'],
-    ['06 · Open PR & Verify Browser Uploads', 'Attaches 3-panel PNGs via GHES Web UI and verifies aspect ratio & decoded pixels.', 'GHES Browser UI'],
-    ['07 · Dispatch Read-Only Reviewer Subagent', 'Audits the exact commit SHA and posts review comments without self-approving.', 'pr-review Subagent']
+    ['01 · Pin Exact Figma Node & Branch Safely', 'Rejects vague library links, protects uncommitted work, and captures Before states first.', '<span class="pill skill"><b class="s-tag">SKILL</b>figma-tools</span><span class="pill" style="font-family:monospace">git</span>'],
+    ['02 · Build Real Compose UI, Previews & KDoc', 'Preserves API stability; covers a11y, RTL, long text, font scale, and themes.', '<span class="pill" style="font-family:monospace">Compose · KDoc</span>'],
+    ['03 · Run Device Tests & Host Screenshots', 'Uses JDK 17 + SDK 35; runs androidTest & lint checks; keeps baseline auth separate.', '<span class="pill" style="font-family:monospace">androidTest · Paparazzi</span>'],
+    ['04 · Generate 3-Column Pixel Diff Per State', 'Places Figma reference, Paparazzi render, and amplified diff side by side.', '<span class="pill skill"><b class="s-tag">SKILL</b>visual-compare</span>'],
+    ['05 · Self-Heal Root Causes with 2-Pass Stop', 'Fixes tokens/spacing and rechecks sibling states; stops after 2 non-improving passes.', '<span class="pill" style="font-family:monospace">Max 2-Pass Loop</span>'],
+    ['06 · Open PR & Verify Browser Uploads', 'Attaches 3-panel PNGs via GHES Web UI and verifies aspect ratio & decoded pixels.', '<span class="pill" style="font-family:monospace">GHES Browser UI</span>'],
+    ['07 · Dispatch Read-Only Reviewer Subagent', 'Audits the exact commit SHA and posts review comments without self-approving.', '<span class="pill skill"><b class="s-tag">SKILL</b>pr-review</span><span class="pill">Subagent</span>']
   ];
 
   function pick(i) {
     document.querySelectorAll('.node-btn').forEach((b, k) => b.classList.toggle('sel', k === i));
     document.getElementById('pTitle').textContent = phases[i][0];
     document.getElementById('pDesc').textContent = phases[i][1];
-    document.getElementById('pTool').textContent = phases[i][2];
+    document.getElementById('pTool').innerHTML = phases[i][2];
   }
 
   function setDiff(fixed) {
