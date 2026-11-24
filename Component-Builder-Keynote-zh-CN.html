@@ -233,7 +233,7 @@
     <section class="slide">
       <div>
         <div class="kicker">Build &amp; Test · 输入与实现</div>
-        <h2>不猜设计，不毁现场，一次写全边缘状态</h2>
+        <h2>不猜设计，不毁现场，真机与快照双重把关</h2>
       </div>
 
       <div class="grid-3">
@@ -252,9 +252,8 @@
           <span class="title-sm">生产级 Compose 组件</span>
           <div class="pills" style="margin-top:6px;">
             <span class="pill green">KDoc 挂 Figma 直链</span>
-            <span class="pill">无障碍读屏</span>
-            <span class="pill">RTL 镜像</span>
-            <span class="pill">超长文本 / 大字号</span>
+            <span class="pill">同步 Sample 与 Preview</span>
+            <span class="pill">保持公共 API 兼容</span>
           </div>
         </div>
 
@@ -445,7 +444,7 @@
 
   const phases = [
     ['01 · 读取精确 Figma 节点并建 story/ 分支', '拒绝模糊整库链接；不动本地无关代码；改旧组件前先截旧图留底。', '<span class="pill skill"><b class="s-tag">SKILL</b>figma-tools</span><span class="pill" style="font-family:monospace">git</span>'],
-    ['02 · 实现真实 Compose 组件、预览与 KDoc', '保持 API 兼容；覆盖无障碍、RTL、长文本、大字号与深浅主题。', '<span class="pill" style="font-family:monospace">Compose · KDoc</span>'],
+    ['02 · 实现真实 Compose 组件、预览与 KDoc', '保持公共 API 兼容；同步更新 Sample/Preview，并将精确 Figma 链接写入 KDoc。', '<span class="pill" style="font-family:monospace">Compose · KDoc</span>'],
     ['03 · 跑通 Android 真机测试与宿主快照', '切换 JDK 17 + SDK 35；跑真机交互与构建检查；基线录制单独授权。', '<span class="pill" style="font-family:monospace">androidTest · Paparazzi</span>'],
     ['04 · 逐个状态生成三栏像素对比图', '并排展示 Figma 原稿、Paparazzi 渲染与放大差异图，严禁拉伸裁剪。', '<span class="pill skill"><b class="s-tag">SKILL</b>visual-compare</span>'],
     ['05 · 自动定位根因并迭代修复视觉偏差', '复用设计 Token 修根因并复查兄弟状态；连续 2 轮无改善自动停手求助。', '<span class="pill" style="font-family:monospace">Max 2-Pass Loop</span>'],
