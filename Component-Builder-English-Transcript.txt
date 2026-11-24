@@ -1,0 +1,76 @@
+Component Builder | English audio transcript
+Gemini narration | 8 slides | 3 min 27 sec
+
+[00:00.000]  1. Workflow overview
+
+Let me start with the whole picture. Component Builder takes a design from Figma, builds
+the component in Jetpack Compose, and tests it on Android. Then it checks each state
+against the design. See these two arrows? If the switch looks wrong, the agent fixes the
+code, renders it again, and comes back here to check the result.
+
+Next, it opens a pull request, or PR. It uses its built-in browser to attach the
+comparison images to the PR and checks that reviewers can open them. A second agent
+reviews the change. Now let’s see what each step looks like with a notification switch.
+
+
+[00:39.572]  2. Choosing the design
+
+It starts with a link to this exact switch in Figma. The design tells the agent which
+states to build. Here we have on, off, and disabled. If the switch already exists in the
+app, the agent captures its current appearance before making a visual change.
+
+
+[00:56.983]  3. Testing on Android
+
+Here’s what we expect in the app. I can turn message alerts off. The sound switch is
+disabled, so tapping it should do nothing. The agent builds the component in Jetpack
+Compose and tests those behaviors on Android. It can also check whether a screen reader
+announces the right state.
+
+
+[01:15.327]  4. Visual comparison
+
+On the left is the Figma design. In the middle is a picture of the component, rendered
+from the current code by a tool called Paparazzi. Can you spot the difference?
+
+Look at the two outlines on the right. In the on state, the switch sits eight pixels too
+far left. When I select off, the outlines line up. Checking only the off state would have
+missed this.
+
+
+[01:40.555]  5. The correction loop
+
+How does the agent know it fixed the problem? In this example, it traces the offset to the
+spacing at the end of the row. It corrects that spacing and renders the switch again under
+the same conditions. The offset drops to zero. Then it checks the other states and reruns
+the affected tests.
+
+What if the offset stays at eight pixels? After two rounds with no verified improvement,
+the agent stops, keeps the evidence, and asks a specific question. Which spacing value
+should this state use?
+
+
+[02:14.946]  6. Opening the pull request
+
+Next, the agent opens or updates the PR. It records the design version, the tests it ran,
+and any open issues. At this point the comparison pictures are still local files. How does
+the reviewer get to see them?
+
+
+[02:31.724]  7. Uploading and verifying screenshots
+
+This is where the built-in browser tools come in. The agent opens the PR in GitHub
+Enterprise, edits the description, and attaches a comparison image for each state under
+Visual validation. It waits for the upload to finish, then saves the description.
+
+Then it opens each image from the saved PR. Does it load? Are the proportions right? Do
+the pixels match the file it intended to upload? If it can’t verify an image or confirm
+reviewer access, it records what still needs checking.
+
+
+[03:07.418]  8. Independent review
+
+Finally, a second agent reviews that exact commit and posts its findings on the PR. The
+team still makes the design decision. As a reviewer, I can now see where those eight
+pixels went, what changed in the code, and how the fix was checked. All of that is in the
+same pull request.
