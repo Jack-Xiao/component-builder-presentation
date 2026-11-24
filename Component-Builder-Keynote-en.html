@@ -123,6 +123,11 @@
       font-size: 10px; font-weight: 900; letter-spacing: 0.06em; padding: 2px 6px;
       border-radius: 5px; background: var(--accent); color: #fff; font-family: system-ui, sans-serif;
     }
+    .pill.builtin {
+      display: inline-flex; align-items: center; gap: 7px; font-family: "SF Mono", Menlo, monospace;
+      background: var(--green-soft); color: var(--text); border-color: var(--green);
+    }
+    .s-tag.builtin { background: #059669; color: #fff; }
     .agent-badge {
       display: inline-flex; align-items: center; gap: 5px;
       background: linear-gradient(135deg, #6366f1, #10b981); color: #fff;
@@ -188,7 +193,7 @@
         <div class="box"><span class="icon">🧩</span><span class="title-sm">Build UI</span><span class="muted-sm">Compose + Previews + KDoc</span></div>
         <div class="box"><span class="icon">📱</span><span class="title-sm">Run Tests</span><span class="muted-sm">Device + Paparazzi shots</span></div>
         <div class="box accent"><span class="icon">🔍</span><span class="title-sm">Fix Pixels</span><span class="muted-sm">3-panel diff &amp; self-heal</span><span class="pill skill" style="width:fit-content;padding:4px 9px;font-size:11px;"><b class="s-tag">SKILL</b>visual-compare</span></div>
-        <div class="box green"><span class="icon">🛡️</span><span class="title-sm">Ship &amp; Audit</span><span class="muted-sm">Web upload + 2nd Agent</span></div>
+        <div class="box green"><span class="icon">🛡️</span><span class="title-sm">Ship &amp; Audit</span><span class="muted-sm">Web upload + 2nd Agent</span><span class="pill builtin" style="width:fit-content;padding:4px 9px;font-size:11px;"><b class="s-tag builtin">BUILT-IN SKILL</b>GHES Browser UI</span></div>
       </div>
 
       <div class="pills">
@@ -333,7 +338,10 @@
     <!-- Slide 06: GHES Browser Upload -->
     <section class="slide">
       <div>
-        <div class="kicker">GitHub Enterprise · Verified Evidence</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
+          <div class="kicker" style="margin-bottom:0;">GitHub Enterprise · Verified Evidence</div>
+          <span class="pill builtin"><b class="s-tag builtin">BUILT-IN SKILL</b>GHES Browser UI</span>
+        </div>
         <h2>Attaches Images via Browser &amp; Verifies Live Pixels</h2>
         <p class="sub">GitHub Enterprise lacks <code>gh pr edit --attach</code> — so the agent automates the web flow:</p>
       </div>
@@ -441,7 +449,7 @@
     ['03 · Run Device Tests & Host Screenshots', 'Uses JDK 17 + SDK 35; runs androidTest & lint checks; keeps baseline auth separate.', '<span class="pill" style="font-family:monospace">androidTest · Paparazzi</span>'],
     ['04 · Generate 3-Column Pixel Diff Per State', 'Places Figma reference, Paparazzi render, and amplified diff side by side.', '<span class="pill skill"><b class="s-tag">SKILL</b>visual-compare</span>'],
     ['05 · Self-Heal Root Causes with 2-Pass Stop', 'Fixes tokens/spacing and rechecks sibling states; stops after 2 non-improving passes.', '<span class="pill" style="font-family:monospace">Max 2-Pass Loop</span>'],
-    ['06 · Open PR & Verify Browser Uploads', 'Attaches 3-panel PNGs via GHES Web UI and verifies aspect ratio & decoded pixels.', '<span class="pill" style="font-family:monospace">GHES Browser UI</span>'],
+    ['06 · Open PR & Verify Browser Uploads', 'Attaches 3-panel PNGs via GHES Web UI and verifies aspect ratio & decoded pixels.', '<span class="pill builtin"><b class="s-tag builtin">BUILT-IN SKILL</b>GHES Browser UI</span>'],
     ['07 · Dispatch Read-Only Reviewer Subagent', 'Audits the exact commit SHA and posts review comments without self-approving.', '<span class="pill skill"><b class="s-tag">SKILL</b>pr-review</span><span class="pill">Subagent</span>']
   ];
 
