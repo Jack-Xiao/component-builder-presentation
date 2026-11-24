@@ -4,7 +4,8 @@
 
 | 内容 | 文件 |
 | --- | --- |
-| 交互演示 | [中文 HTML](Component-Builder-zh-CN.html) · [English HTML](Component-Builder-en.html) |
+| 极简大字版 PPT（Keynote 风格） | [中文极简 HTML](Component-Builder-Keynote-zh-CN.html) · [English Minimal HTML](Component-Builder-Keynote-en.html) |
+| 实例详解演示（通知开关案例） | [中文 HTML](Component-Builder-zh-CN.html) · [English HTML](Component-Builder-en.html) |
 | 流程总览图 | [中文 PNG](Component-Builder-Workflow-zh-CN.png) · [English PNG](Component-Builder-Workflow-en.png) |
 | 英文演讲录音 | [Gemini 配音 MP3](Component-Builder-English-Gemini.mp3) · 3 分 27 秒 |
 | 录音逐字稿 | [英文纯文本，按页标注时间](Component-Builder-English-Transcript.txt) |

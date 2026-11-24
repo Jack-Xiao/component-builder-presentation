@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Component Builder · Keynote Deck</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    .app[data-theme="dark"] {
+      --bg: #070b14;
+      --glow: radial-gradient(circle at 18% 18%, rgba(99,102,241,0.18), transparent 42%),
+              radial-gradient(circle at 82% 82%, rgba(16,185,129,0.14), transparent 42%);
+      --surface: #0f172a;
+      --card: rgba(30, 41, 59, 0.65);
+      --card-solid: #162033;
+      --border: rgba(148, 163, 184, 0.16);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #818cf8;
+      --accent-soft: rgba(99, 102, 241, 0.16);
+      --green: #34d399;
+      --green-soft: rgba(16, 185, 129, 0.15);
+      --amber: #fbbf24;
+      --amber-soft: rgba(245, 158, 11, 0.15);
+      --rose: #fb7185;
+      --rose-soft: rgba(244, 63, 94, 0.15);
+      --shadow: 0 28px 70px rgba(0,0,0,0.5);
+    }
+    .app[data-theme="light"] {
+      --bg: #f1f5f9;
+      --glow: radial-gradient(circle at 18% 18%, rgba(99,102,241,0.10), transparent 42%),
+              radial-gradient(circle at 82% 82%, rgba(16,185,129,0.10), transparent 42%);
+      --surface: #ffffff;
+      --card: #f8fafc;
+      --card-solid: #f1f5f9;
+      --border: rgba(15, 23, 42, 0.10);
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #4f46e5;
+      --accent-soft: rgba(79, 70, 229, 0.10);
+      --green: #059669;
+      --green-soft: rgba(5, 150, 105, 0.10);
+      --amber: #d97706;
+      --amber-soft: rgba(217, 119, 6, 0.11);
+      --rose: #e11d48;
+      --rose-soft: rgba(225, 29, 72, 0.10);
+      --shadow: 0 20px 50px rgba(15,23,42,0.08);
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .app {
+      min-height: 100vh; background-color: var(--bg); background-image: var(--glow);
+      color: var(--text); display: flex; flex-direction: column;
+    }
+    .topbar, .dock {
+      height: 54px; padding: 0 28px; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border); background: var(--surface);
+    }
+    .dock { border-bottom: none; border-top: 1px solid var(--border); }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 15px; }
+    .logo {
+      width: 26px; height: 26px; border-radius: 7px;
+      background: linear-gradient(135deg, #6366f1, #10b981);
+      color: #fff; display: grid; place-items: center; font-size: 12px; font-weight: 900;
+    }
+    .actions { display: flex; gap: 8px; align-items: center; }
+    .btn {
+      background: var(--card); color: var(--text); border: 1px solid var(--border);
+      padding: 6px 13px; border-radius: 8px; font-size: 12.5px; font-weight: 600;
+      cursor: pointer; text-decoration: none; transition: 0.18s ease;
+    }
+    .btn:hover { border-color: var(--accent); }
+    .btn.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+    .stage { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .slide {
+      display: none; width: 100%; max-width: 1120px; min-height: 560px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 24px;
+      padding: 48px 56px; box-shadow: var(--shadow);
+      flex-direction: column; justify-content: center; gap: 32px;
+      animation: pop 0.25s ease-out;
+    }
+    .slide.active { display: flex; }
+    @keyframes pop { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    .kicker {
+      font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent); background: var(--accent-soft);
+      padding: 5px 12px; border-radius: 99px; width: fit-content; margin-bottom: 12px;
+    }
+    h1 { font-size: clamp(36px, 4.6vw, 56px); font-weight: 850; line-height: 1.12; letter-spacing: -0.028em; }
+    h2 { font-size: clamp(28px, 3.4vw, 42px); font-weight: 800; line-height: 1.18; letter-spacing: -0.02em; }
+    .sub { font-size: clamp(16px, 1.5vw, 20px); color: var(--muted); margin-top: 10px; }
+    .flow-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .flow-7 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .box {
+      background: var(--card); border: 1px solid var(--border); border-radius: 18px;
+      padding: 24px; display: flex; flex-direction: column; gap: 10px;
+    }
+    .box.accent { background: var(--accent-soft); border-color: var(--accent); }
+    .box.green { background: var(--green-soft); border-color: var(--green); }
+    .box.amber { background: var(--amber-soft); border-color: var(--amber); }
+    .box.rose { background: var(--rose-soft); border-color: var(--rose); }
+    .icon { font-size: 28px; line-height: 1; }
+    .big-num { font-size: 36px; font-weight: 900; font-family: "SF Mono", Menlo, monospace; line-height: 1; }
+    .title-sm { font-size: 18px; font-weight: 750; }
+    .muted-sm { font-size: 13.5px; color: var(--muted); line-height: 1.45; }
+    .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill {
+      padding: 6px 12px; border-radius: 99px; font-size: 12.5px; font-weight: 700;
+      background: var(--card-solid); border: 1px solid var(--border);
+    }
+    .pill.green { background: var(--green-soft); color: var(--green); border-color: transparent; }
+    .pill.amber { background: var(--amber-soft); color: var(--amber); border-color: transparent; }
+    .pill.rose { background: var(--rose-soft); color: var(--rose); border-color: transparent; }
+    .node-btn {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 16px 10px; text-align: center; cursor: pointer; color: var(--text); transition: 0.18s;
+    }
+    .node-btn.sel, .node-btn:hover { background: var(--accent-soft); border-color: var(--accent); transform: translateY(-2px); }
+    .dots { display: flex; gap: 7px; }
+    .dot { width: 24px; height: 7px; border-radius: 99px; border: none; background: var(--border); cursor: pointer; transition: 0.2s; }
+    .dot.active { width: 44px; background: var(--accent); }
+    .mock-stage {
+      height: 120px; border-radius: 12px; background: var(--card-solid); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ui-pill {
+      display: inline-flex; align-items: center; gap: 14px; background: var(--surface);
+      border: 1px solid var(--border); padding: 12px 20px; border-radius: 12px; font-weight: 700;
+    }
+    .sw { width: 40px; height: 22px; border-radius: 99px; background: #10b981; position: relative; transition: 0.25s; }
+    .sw::after { content: ""; position: absolute; top: 3px; right: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; }
+    @media (max-width: 860px) {
+      .slide { padding: 28px 22px; min-height: auto; }
+      .flow-5, .flow-7, .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    }
+    @media print {
+      .topbar, .dock { display: none !important; }
+      .stage { display: block; padding: 0; }
+      .slide { display: flex !important; page-break-after: always; box-shadow: none; margin-bottom: 16px; }
+    }
+  </style>
+</head>
+<body>
+<div class="app" id="app" data-theme="dark">
+  <header class="topbar">
+    <div class="brand"><span class="logo">CB</span>Component Builder</div>
+    <div class="actions">
+      <button class="btn" id="themeBtn" onclick="toggleTheme()">Light Mode</button>
+      <a class="btn" href="./Component-Builder-Keynote-zh-CN.html">中文版 →</a>
+    </div>
+  </header>
+
+  <main class="stage">
+    <!-- Slide 01: Hero -->
+    <section class="slide active">
+      <div>
+        <div class="kicker">Android Compose · Autonomous Delivery Agent</div>
+        <h1>One Figma Link In.<br/><span style="color:var(--accent)">One Review-Ready PR Out.</span></h1>
+        <p class="sub">Builds Compose UI, runs Android tests, fixes pixel drift, attaches proof, and runs an independent review.</p>
+      </div>
+
+      <div class="flow-5">
+        <div class="box"><span class="icon">🎨</span><span class="title-sm">Read Node</span><span class="muted-sm">Pin exact Figma states</span></div>
+        <div class="box"><span class="icon">🧩</span><span class="title-sm">Build UI</span><span class="muted-sm">Compose + Previews + KDoc</span></div>
+        <div class="box"><span class="icon">📱</span><span class="title-sm">Run Tests</span><span class="muted-sm">Device + Paparazzi shots</span></div>
+        <div class="box accent"><span class="icon">🔍</span><span class="title-sm">Fix Pixels</span><span class="muted-sm">3-panel diff &amp; self-heal</span></div>
+        <div class="box green"><span class="icon">🛡️</span><span class="title-sm">Ship &amp; Audit</span><span class="muted-sm">Web upload + 2nd Agent</span></div>
+      </div>
+
+      <div class="pills">
+        <span class="pill green">✓ 7-Step Closed Loop</span>
+        <span class="pill">✓ Before vs. After Proof</span>
+        <span class="pill amber">✓ 2-Pass Circuit Breaker</span>
+      </div>
+    </section>
+
+    <!-- Slide 02: 7-Step Pipeline -->
+    <section class="slide">
+      <div>
+        <div class="kicker">Workflow · End-to-End</div>
+        <h2>7 Automated Steps — Click Any Step to Peek</h2>
+      </div>
+
+      <div class="flow-7">
+        <button class="node-btn sel" onclick="pick(0)"><div class="icon">🎯</div><div style="font-weight:800;margin-top:8px;font-size:13px;">01 Design</div></button>
+        <button class="node-btn" onclick="pick(1)"><div class="icon">🧩</div><div style="font-weight:800;margin-top:8px;font-size:13px;">02 Code</div></button>
+        <button class="node-btn" onclick="pick(2)"><div class="icon">🧪</div><div style="font-weight:800;margin-top:8px;font-size:13px;">03 Test</div></button>
+        <button class="node-btn" onclick="pick(3)"><div class="icon">🖼️</div><div style="font-weight:800;margin-top:8px;font-size:13px;">04 Diff</div></button>
+        <button class="node-btn" onclick="pick(4)"><div class="icon">🔄</div><div style="font-weight:800;margin-top:8px;font-size:13px;">05 Heal</div></button>
+        <button class="node-btn" onclick="pick(5)"><div class="icon">🌐</div><div style="font-weight:800;margin-top:8px;font-size:13px;">06 Upload</div></button>
+        <button class="node-btn" onclick="pick(6)"><div class="icon">🕵️</div><div style="font-weight:800;margin-top:8px;font-size:13px;">07 Review</div></button>
+      </div>
+
+      <div class="box accent" style="flex-direction:row;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+        <div>
+          <div class="title-sm" id="pTitle" style="font-size:21px;">01 · Pin Exact Figma Node &amp; Branch Safely</div>
+          <div class="muted-sm" id="pDesc" style="margin-top:6px;font-size:15px;">Rejects vague library links, protects uncommitted work, and captures Before states first.</div>
+        </div>
+        <span class="pill" id="pTool" style="font-family:monospace;">figma-tools · git</span>
+      </div>
+    </section>
+
+    <!-- Slide 03: Input & Build -->
+    <section class="slide">
+      <div>
+        <div class="kicker">Build &amp; Test · Foundations</div>
+        <h2>Exact Specs. Safe Branches. Edge-State Ready.</h2>
+      </div>
+
+      <div class="grid-3">
+        <div class="box">
+          <span class="big-num" style="color:var(--accent)">01</span>
+          <span class="title-sm">Exact Node &amp; Branch</span>
+          <div class="pills" style="margin-top:6px;">
+            <span class="pill">Pin node-id &amp; version</span>
+            <span class="pill">Create story/* branch</span>
+            <span class="pill amber">Never auto-stash dirty files</span>
+          </div>
+        </div>
+
+        <div class="box">
+          <span class="big-num" style="color:var(--green)">02</span>
+          <span class="title-sm">Production Compose</span>
+          <div class="pills" style="margin-top:6px;">
+            <span class="pill green">Clean KDoc Figma URL</span>
+            <span class="pill">Accessibility</span>
+            <span class="pill">RTL Layouts</span>
+            <span class="pill">Long Text &amp; Font Scale</span>
+          </div>
+        </div>
+
+        <div class="box">
+          <span class="big-num" style="color:var(--amber)">03</span>
+          <span class="title-sm">Dual Verification</span>
+          <div class="pills" style="margin-top:6px;">
+            <span class="pill">Device androidTest</span>
+            <span class="pill">JDK 17 · SDK 35</span>
+            <span class="pill">Paparazzi Host Captures</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 04: 3-Column Diff -->
+    <section class="slide">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div class="kicker">Visual Compare · Pixel Truth</div>
+          <h2>3-Column Diff Catches Every Misaligned Pixel</h2>
+        </div>
+        <div class="actions">
+          <button class="btn active" id="vBtn0" onclick="setDiff(false)">Before: 8px Drift</button>
+          <button class="btn" id="vBtn1" onclick="setDiff(true)">After: 0px Aligned</button>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="box">
+          <span class="muted-sm">① Figma Reference</span>
+          <div class="mock-stage"><div class="ui-pill"><span>Notifications</span><span class="sw"></span></div></div>
+          <span class="pill">Design Target</span>
+        </div>
+        <div class="box">
+          <span class="muted-sm">② Paparazzi Render</span>
+          <div class="mock-stage"><div class="ui-pill" id="curPill" style="transform:translateX(-10px)"><span>Notifications</span><span class="sw"></span></div></div>
+          <span class="pill amber" id="curTag">Shifted 8px Left</span>
+        </div>
+        <div class="box rose" id="diffBox">
+          <span class="muted-sm">③ Amplified Diff</span>
+          <div class="mock-stage"><div class="ui-pill" id="diffPill" style="border:2px dashed #fb7185;color:#fb7185;"><span>Outline Delta Alert</span></div></div>
+          <span class="pill rose" id="diffTag">Issue #V-01 Logged</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 05: Visual Correction Loop -->
+    <section class="slide">
+      <div>
+        <div class="kicker">Correction Loop · Secret Sauce</div>
+        <h2>Fixes Root Causes Automatically. Stops If Stalled.</h2>
+      </div>
+
+      <div class="grid-2">
+        <div class="box green">
+          <span class="icon">🔄</span>
+          <span class="title-sm">Self-Healing Code Loop</span>
+          <div class="pills" style="margin-top:8px;">
+            <span class="pill green">1. Fix root cause using Tokens</span>
+            <span class="pill green">2. Recapture &amp; rerun diff</span>
+            <span class="pill green">3. Recheck sibling states too</span>
+          </div>
+        </div>
+
+        <div class="box amber">
+          <span class="big-num" style="color:var(--amber)">2-Pass Stop</span>
+          <span class="title-sm">No Infinite Loops. No Metric Gaming.</span>
+          <div class="pills" style="margin-top:8px;">
+            <span class="pill amber">2 stalled passes → Stop &amp; Ask</span>
+            <span class="pill">Keep proof · Leave PR in Draft</span>
+            <span class="pill rose">Never fake baselines or thresholds</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 06: GHES Browser Upload -->
+    <section class="slide">
+      <div>
+        <div class="kicker">GitHub Enterprise · Verified Evidence</div>
+        <h2>Attaches Images via Browser &amp; Verifies Live Pixels</h2>
+        <p class="sub">GitHub Enterprise lacks <code>gh pr edit --attach</code> — so the agent automates the web flow:</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="box">
+          <span class="icon">📝</span>
+          <span class="title-sm">1. Open Template PR</span>
+          <span class="muted-sm">Fills scope, checks, and state matrix; keeps raw exports out of Git.</span>
+        </div>
+        <div class="box accent">
+          <span class="icon">🌐</span>
+          <span class="title-sm">2. Attach in PR Body</span>
+          <span class="muted-sm">Uses approved Web UI to embed 3-panel PNGs directly into description.</span>
+        </div>
+        <div class="box green">
+          <span class="icon">🔬</span>
+          <span class="title-sm">3. Reopen &amp; Verify</span>
+          <span class="muted-sm">Confirms reviewer load, aspect ratio, and exact decoded pixels.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 07: Independent Subagent Review -->
+    <section class="slide">
+      <div>
+        <div class="kicker">Independent Review · Separation of Powers</div>
+        <h2>The Builder Writes. A Second Agent Audits.</h2>
+      </div>
+
+      <div class="grid-3" style="align-items:center;">
+        <div class="box">
+          <span class="icon">👷</span>
+          <span class="title-sm">Builder Agent</span>
+          <div class="pills"><span class="pill">Writes UI &amp; Tests</span><span class="pill">Opens PR &amp; Uploads Proof</span></div>
+        </div>
+
+        <div class="box accent" style="text-align:center;">
+          <span class="icon">📦</span>
+          <span class="title-sm">Pull Request</span>
+          <span class="muted-sm" style="font-family:monospace;">Pinned to Exact Head SHA</span>
+        </div>
+
+        <div class="box green">
+          <span class="icon">🕵️</span>
+          <span class="title-sm">Reviewer Subagent</span>
+          <div class="pills">
+            <span class="pill green">Runs pr-review</span>
+            <span class="pill">Strictly Read-Only</span>
+            <span class="pill rose">Posts Findings · Never Approves</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 08: Human vs Agent -->
+    <section class="slide">
+      <div>
+        <div class="kicker">Governance · Clear Boundaries</div>
+        <h2>Agent Does the Legwork. Humans Hold the Keys.</h2>
+      </div>
+
+      <div class="grid-2">
+        <div class="box green">
+          <span class="title-sm">🤖 Handled by Agent</span>
+          <div class="pills" style="margin-top:8px;">
+            <span class="pill green">✓ Story branch &amp; Compose UI</span>
+            <span class="pill green">✓ Device tests &amp; host renders</span>
+            <span class="pill green">✓ Pixel diff &amp; root-cause fixes</span>
+            <span class="pill green">✓ Web upload &amp; 2nd-agent review</span>
+          </div>
+        </div>
+
+        <div class="box amber">
+          <span class="title-sm">👤 Reserved for Humans</span>
+          <div class="pills" style="margin-top:8px;">
+            <span class="pill amber">🔑 Clarify ambiguous design specs</span>
+            <span class="pill amber">🔑 Authorize golden baseline commits</span>
+            <span class="pill amber">🔑 Final design sign-off &amp; PR merge</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="dock">
+    <button class="btn" id="prevBtn" onclick="step(-1)">← Previous</button>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div class="dots" id="dots"></div>
+      <span id="cnt" style="font-size:12px;font-weight:800;color:var(--muted);font-family:monospace;">01 / 08</span>
+    </div>
+    <button class="btn" id="nextBtn" onclick="step(1)">Next →</button>
+  </footer>
+</div>
+
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  const dots = document.getElementById('dots');
+  const app = document.getElementById('app');
+  let cur = 0;
+
+  const phases = [
+    ['01 · Pin Exact Figma Node & Branch Safely', 'Rejects vague library links, protects uncommitted work, and captures Before states first.', 'figma-tools · git'],
+    ['02 · Build Real Compose UI, Previews & KDoc', 'Preserves API stability; covers a11y, RTL, long text, font scale, and themes.', 'Compose · KDoc'],
+    ['03 · Run Device Tests & Host Screenshots', 'Uses JDK 17 + SDK 35; runs androidTest & lint checks; keeps baseline auth separate.', 'androidTest · Paparazzi'],
+    ['04 · Generate 3-Column Pixel Diff Per State', 'Places Figma reference, Paparazzi render, and amplified diff side by side.', 'visual-compare'],
+    ['05 · Self-Heal Root Causes with 2-Pass Stop', 'Fixes tokens/spacing and rechecks sibling states; stops after 2 non-improving passes.', 'Max 2-Pass Loop'],
+    ['06 · Open PR & Verify Browser Uploads', 'Attaches 3-panel PNGs via GHES Web UI and verifies aspect ratio & decoded pixels.', 'GHES Browser UI'],
+    ['07 · Dispatch Read-Only Reviewer Subagent', 'Audits the exact commit SHA and posts review comments without self-approving.', 'pr-review Subagent']
+  ];
+
+  function pick(i) {
+    document.querySelectorAll('.node-btn').forEach((b, k) => b.classList.toggle('sel', k === i));
+    document.getElementById('pTitle').textContent = phases[i][0];
+    document.getElementById('pDesc').textContent = phases[i][1];
+    document.getElementById('pTool').textContent = phases[i][2];
+  }
+
+  function setDiff(fixed) {
+    document.getElementById('vBtn0').classList.toggle('active', !fixed);
+    document.getElementById('vBtn1').classList.toggle('active', fixed);
+    document.getElementById('curPill').style.transform = fixed ? 'none' : 'translateX(-10px)';
+    const ct = document.getElementById('curTag');
+    ct.textContent = fixed ? 'Aligned with Design' : 'Shifted 8px Left';
+    ct.className = fixed ? 'pill green' : 'pill amber';
+    const db = document.getElementById('diffBox');
+    db.className = fixed ? 'box green' : 'box rose';
+    const dp = document.getElementById('diffPill');
+    dp.style.border = fixed ? '2px solid #34d399' : '2px dashed #fb7185';
+    dp.style.color = fixed ? '#34d399' : '#fb7185';
+    dp.innerHTML = fixed ? '<span>✓ Outlines Coincide</span>' : '<span>Outline Delta Alert</span>';
+    const dt = document.getElementById('diffTag');
+    dt.textContent = fixed ? '0px Drift · Verified' : 'Issue #V-01 Logged';
+    dt.className = fixed ? 'pill green' : 'pill rose';
+  }
+
+  function render() {
+    dots.innerHTML = '';
+    slides.forEach((_, i) => {
+      const b = document.createElement('button');
+      b.className = 'dot' + (i === cur ? ' active' : '');
+      b.onclick = () => go(i);
+      dots.appendChild(b);
+    });
+    document.getElementById('cnt').textContent = `0${cur + 1} / 0${slides.length}`;
+    document.getElementById('prevBtn').disabled = cur === 0;
+    document.getElementById('nextBtn').disabled = cur === slides.length - 1;
+  }
+
+  function go(n) {
+    cur = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, i) => s.classList.toggle('active', i === cur));
+    render();
+  }
+  function step(d) { go(cur + d); }
+  function toggleTheme() {
+    const next = app.dataset.theme === 'dark' ? 'light' : 'dark';
+    app.dataset.theme = next;
+    document.getElementById('themeBtn').textContent = next === 'dark' ? 'Light Mode' : 'Dark Mode';
+  }
+  window.addEventListener('keydown', e => {
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); step(1); }
+    if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); step(-1); }
+  });
+  render();
+</script>
+</body>
+</html>

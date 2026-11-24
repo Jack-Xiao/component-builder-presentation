@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Component Builder · 极简全景演示</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    .app[data-theme="dark"] {
+      --bg: #070b14;
+      --glow: radial-gradient(circle at 18% 18%, rgba(99,102,241,0.18), transparent 42%),
+              radial-gradient(circle at 82% 82%, rgba(16,185,129,0.14), transparent 42%);
+      --surface: #0f172a;
+      --card: rgba(30, 41, 59, 0.65);
+      --card-solid: #162033;
+      --border: rgba(148, 163, 184, 0.16);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #818cf8;
+      --accent-soft: rgba(99, 102, 241, 0.16);
+      --green: #34d399;
+      --green-soft: rgba(16, 185, 129, 0.15);
+      --amber: #fbbf24;
+      --amber-soft: rgba(245, 158, 11, 0.15);
+      --rose: #fb7185;
+      --rose-soft: rgba(244, 63, 94, 0.15);
+      --shadow: 0 28px 70px rgba(0,0,0,0.5);
+    }
+    .app[data-theme="light"] {
+      --bg: #f1f5f9;
+      --glow: radial-gradient(circle at 18% 18%, rgba(99,102,241,0.10), transparent 42%),
+              radial-gradient(circle at 82% 82%, rgba(16,185,129,0.10), transparent 42%);
+      --surface: #ffffff;
+      --card: #f8fafc;
+      --card-solid: #f1f5f9;
+      --border: rgba(15, 23, 42, 0.10);
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #4f46e5;
+      --accent-soft: rgba(79, 70, 229, 0.10);
+      --green: #059669;
+      --green-soft: rgba(5, 150, 105, 0.10);
+      --amber: #d97706;
+      --amber-soft: rgba(217, 119, 6, 0.11);
+      --rose: #e11d48;
+      --rose-soft: rgba(225, 29, 72, 0.10);
+      --shadow: 0 20px 50px rgba(15,23,42,0.08);
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Microsoft YaHei", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .app {
+      min-height: 100vh; background-color: var(--bg); background-image: var(--glow);
+      color: var(--text); display: flex; flex-direction: column;
+    }
+    .topbar, .dock {
+      height: 54px; padding: 0 28px; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border); background: var(--surface);
+    }
+    .dock { border-bottom: none; border-top: 1px solid var(--border); }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 15px; }
+    .logo {
+      width: 26px; height: 26px; border-radius: 7px;
+      background: linear-gradient(135deg, #6366f1, #10b981);
+      color: #fff; display: grid; place-items: center; font-size: 12px; font-weight: 900;
+    }
+    .actions { display: flex; gap: 8px; align-items: center; }
+    .btn {
+      background: var(--card); color: var(--text); border: 1px solid var(--border);
+      padding: 6px 13px; border-radius: 8px; font-size: 12.5px; font-weight: 600;
+      cursor: pointer; text-decoration: none; transition: 0.18s ease;
+    }
+    .btn:hover { border-color: var(--accent); }
+    .btn.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+    .stage { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .slide {
+      display: none; width: 100%; max-width: 1120px; min-height: 560px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 24px;
+      padding: 48px 56px; box-shadow: var(--shadow);
+      flex-direction: column; justify-content: center; gap: 32px;
+      animation: pop 0.25s ease-out;
+    }
+    .slide.active { display: flex; }
+    @keyframes pop { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    .kicker {
+      font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent); background: var(--accent-soft);
+      padding: 5px 12px; border-radius: 99px; width: fit-content; margin-bottom: 12px;
+    }
+    h1 { font-size: clamp(36px, 4.6vw, 56px); font-weight: 850; line-height: 1.15; letter-spacing: -0.025em; }
+    h2 { font-size: clamp(28px, 3.4vw, 42px); font-weight: 800; line-height: 1.2; letter-spacing: -0.02em; }
+    .sub { font-size: clamp(16px, 1.5vw, 20px); color: var(--muted); margin-top: 10px; }
+    .flow-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .flow-7 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .box {
+      background: var(--card); border: 1px solid var(--border); border-radius: 18px;
+      padding: 24px; display: flex; flex-direction: column; gap: 10px;
+    }
+    .box.accent { background: var(--accent-soft); border-color: var(--accent); }
+    .box.green { background: var(--green-soft); border-color: var(--green); }
+    .box.amber { background: var(--amber-soft); border-color: var(--amber); }
+    .box.rose { background: var(--rose-soft); border-color: var(--rose); }
+    .icon { font-size: 28px; line-height: 1; }
+    .big-num { font-size: 36px; font-weight: 900; font-family: "SF Mono", Menlo, monospace; line-height: 1; }
+    .title-sm { font-size: 18px; font-weight: 750; }
+    .muted-sm { font-size: 13.5px; color: var(--muted); line-height: 1.45; }
+    .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill {
+      padding: 6px 12px; border-radius: 99px; font-size: 12.5px; font-weight: 700;
+      background: var(--card-solid); border: 1px solid var(--border);
+    }
+    .pill.green { background: var(--green-soft); color: var(--green); border-color: transparent; }
+    .pill.amber { background: var(--amber-soft); color: var(--amber); border-color: transparent; }
+    .pill.rose { background: var(--rose-soft); color: var(--rose); border-color: transparent; }
+    .node-btn {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 16px 10px; text-align: center; cursor: pointer; color: var(--text); transition: 0.18s;
+    }
+    .node-btn.sel, .node-btn:hover { background: var(--accent-soft); border-color: var(--accent); transform: translateY(-2px); }
+    .dots { display: flex; gap: 7px; }
+    .dot { width: 24px; height: 7px; border-radius: 99px; border: none; background: var(--border); cursor: pointer; transition: 0.2s; }
+    .dot.active { width: 44px; background: var(--accent); }
+    .mock-stage {
+      height: 120px; border-radius: 12px; background: var(--card-solid); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ui-pill {
+      display: inline-flex; align-items: center; gap: 14px; background: var(--surface);
+      border: 1px solid var(--border); padding: 12px 20px; border-radius: 12px; font-weight: 700;
+    }
+    .sw { width: 40px; height: 22px; border-radius: 99px; background: #10b981; position: relative; transition: 0.25s; }
+    .sw::after { content: ""; position: absolute; top: 3px; right: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; }
+    @media (max-width: 860px) {
+      .slide { padding: 28px 22px; min-height: auto; }
+      .flow-5, .flow-7, .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    }
+    @media print {
+      .topbar, .dock { display: none !important; }
+      .stage { display: block; padding: 0; }
+      .slide { display: flex !important; page-break-after: always; box-shadow: none; margin-bottom: 16px; }
+    }
+  </style>
+</head>
+<body>
+<div class="app" id="app" data-theme="dark">
+  <header class="topbar">
+    <div class="brand"><span class="logo">CB</span>Component Builder</div>
+    <div class="actions">
+      <button class="btn" id="themeBtn" onclick="toggleTheme()">浅色模式</button>
+      <a class="btn" href="./Component-Builder-Keynote-en.html">English →</a>
+    </div>
+  </header>
+
+  <main class="stage">
+    <!-- Slide 01: 封面 -->
+    <section class="slide active">
+      <div>
+        <div class="kicker">Android Compose · 全自动组件研发 Agent</div>
+        <h1>给一个 Figma 节点链接<br/><span style="color:var(--accent)">交付一个可直接合入的 PR</span></h1>
+        <p class="sub">不止写代码——自动跑通测试、像素级对比自愈、贴图验真与独立评审。</p>
+      </div>
+
+      <div class="flow-5">
+        <div class="box"><span class="icon">🎨</span><span class="title-sm">读设计</span><span class="muted-sm">锁定精确节点与状态</span></div>
+        <div class="box"><span class="icon">🧩</span><span class="title-sm">写组件</span><span class="muted-sm">Compose + 预览 + KDoc</span></div>
+        <div class="box"><span class="icon">📱</span><span class="title-sm">跑测试</span><span class="muted-sm">真机交互 + 宿主快照</span></div>
+        <div class="box accent"><span class="icon">🔍</span><span class="title-sm">修像素</span><span class="muted-sm">三栏比对 · 自动纠偏</span></div>
+        <div class="box green"><span class="icon">🛡️</span><span class="title-sm">提评审</span><span class="muted-sm">网页贴图 + 独立 Agent 审</span></div>
+      </div>
+
+      <div class="pills">
+        <span class="pill green">✓ 7 步端到端闭环</span>
+        <span class="pill">✓ 存量改动自动对比前后态</span>
+        <span class="pill amber">✓ 连续 2 轮无进展自动停机防死循环</span>
+      </div>
+    </section>
+
+    <!-- Slide 02: 七步流水线（点击切换一句话说明） -->
+    <section class="slide">
+      <div>
+        <div class="kicker">Workflow · 工作流全景</div>
+        <h2>七步闭环，点击任一环节看它干嘛</h2>
+      </div>
+
+      <div class="flow-7" id="pBar">
+        <button class="node-btn sel" onclick="pick(0)"><div class="icon">🎯</div><div style="font-weight:800;margin-top:8px;font-size:14px;">01 读节点</div></button>
+        <button class="node-btn" onclick="pick(1)"><div class="icon">🧩</div><div style="font-weight:800;margin-top:8px;font-size:14px;">02 写组件</div></button>
+        <button class="node-btn" onclick="pick(2)"><div class="icon">🧪</div><div style="font-weight:800;margin-top:8px;font-size:14px;">03 跑测试</div></button>
+        <button class="node-btn" onclick="pick(3)"><div class="icon">🖼️</div><div style="font-weight:800;margin-top:8px;font-size:14px;">04 比像素</div></button>
+        <button class="node-btn" onclick="pick(4)"><div class="icon">🔄</div><div style="font-weight:800;margin-top:8px;font-size:14px;">05 自愈环</div></button>
+        <button class="node-btn" onclick="pick(5)"><div class="icon">🌐</div><div style="font-weight:800;margin-top:8px;font-size:14px;">06 贴截图</div></button>
+        <button class="node-btn" onclick="pick(6)"><div class="icon">🕵️</div><div style="font-weight:800;margin-top:8px;font-size:14px;">07 独立审</div></button>
+      </div>
+
+      <div class="box accent" style="flex-direction:row;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+        <div>
+          <div class="title-sm" id="pTitle" style="font-size:21px;">01 · 读取精确 Figma 节点并建 story/ 分支</div>
+          <div class="muted-sm" id="pDesc" style="margin-top:6px;font-size:15px;">拒绝模糊整库链接；不动本地无关代码；改旧组件前先截旧图留底。</div>
+        </div>
+        <span class="pill" id="pTool" style="font-family:monospace;">figma-tools · git</span>
+      </div>
+    </section>
+
+    <!-- Slide 03: 输入与编码 -->
+    <section class="slide">
+      <div>
+        <div class="kicker">Build &amp; Test · 输入与实现</div>
+        <h2>不猜设计，不毁现场，一次写全边缘状态</h2>
+      </div>
+
+      <div class="grid-3">
+        <div class="box">
+          <span class="big-num" style="color:var(--accent)">01</span>
+          <span class="title-sm">精确节点 + 安全分支</span>
+          <div class="pills" style="margin-top:6px;">
+            <span class="pill">锁定 node-id 与版本</span>
+            <span class="pill">新建 story/* 分支</span>
+            <span class="pill amber">绝不擅自 stash 本地改动</span>
+          </div>
+        </div>
+
+        <div class="box">
+          <span class="big-num" style="color:var(--green)">02</span>
+          <span class="title-sm">生产级 Compose 组件</span>
+          <div class="pills" style="margin-top:6px;">
+            <span class="pill green">KDoc 挂 Figma 直链</span>
+            <span class="pill">无障碍读屏</span>
+            <span class="pill">RTL 镜像</span>
+            <span class="pill">超长文本 / 大字号</span>
+          </div>
+        </div>
+
+        <div class="box">
+          <span class="big-num" style="color:var(--amber)">03</span>
+          <span class="title-sm">真机 + 宿主双测试</span>
+          <div class="pills" style="margin-top:6px;">
+            <span class="pill">androidTest 真机交互</span>
+            <span class="pill">JDK 17 · SDK 35</span>
+            <span class="pill">Paparazzi 永久快照</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 04: 三栏对比演示 -->
+    <section class="slide">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div class="kicker">Visual Compare · 像素级对比</div>
+          <h2>三栏并排对比，几像素偏移一眼看穿</h2>
+        </div>
+        <div class="actions">
+          <button class="btn active" id="vBtn0" onclick="setDiff(false)">修正前：偏了 8px</button>
+          <button class="btn" id="vBtn1" onclick="setDiff(true)">修正后：0px 对齐</button>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="box">
+          <span class="muted-sm">① Figma 设计原稿</span>
+          <div class="mock-stage"><div class="ui-pill"><span>消息通知</span><span class="sw"></span></div></div>
+          <span class="pill">设计基准位置</span>
+        </div>
+        <div class="box">
+          <span class="muted-sm">② Paparazzi 当前渲染</span>
+          <div class="mock-stage"><div class="ui-pill" id="curPill" style="transform:translateX(-10px)"><span>消息通知</span><span class="sw"></span></div></div>
+          <span class="pill amber" id="curTag">开关左偏 8px</span>
+        </div>
+        <div class="box rose" id="diffBox">
+          <span class="muted-sm">③ Amplified 放大差异图</span>
+          <div class="mock-stage"><div class="ui-pill" id="diffPill" style="border:2px dashed #fb7185;color:#fb7185;"><span>轮廓错位报警</span></div></div>
+          <span class="pill rose" id="diffTag">检出差异 #V-01</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 05: 视觉自愈闭环 -->
+    <section class="slide">
+      <div>
+        <div class="kicker">Correction Loop · 核心杀手锏</div>
+        <h2>发现偏差自己改代码，卡住两轮立刻停手</h2>
+      </div>
+
+      <div class="grid-2">
+        <div class="box green">
+          <span class="icon">🔄</span>
+          <span class="title-sm">自动闭环修复</span>
+          <div class="pills" style="margin-top:8px;">
+            <span class="pill green">1. 查代码根因 &amp; 复用 Token</span>
+            <span class="pill green">2. 重新快照 + 重新比对</span>
+            <span class="pill green">3. 连带复查其他状态防误伤</span>
+          </div>
+        </div>
+
+        <div class="box amber">
+          <span class="big-num" style="color:var(--amber)">2 轮熔断</span>
+          <span class="title-sm">绝不死循环，绝不改参数作弊</span>
+          <div class="pills" style="margin-top:8px;">
+            <span class="pill amber">连续 2 轮无改善 → 立即停止</span>
+            <span class="pill">保留证据 · PR 设为草稿</span>
+            <span class="pill rose">严禁调高容差 / 遮挡差异</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 06: GHES 浏览器贴图与核验 -->
+    <section class="slide">
+      <div>
+        <div class="kicker">GitHub Enterprise · 证据上墙</div>
+        <h2>绕开企业版命令限制，用浏览器贴图并逐张验真</h2>
+        <p class="sub">企业版 GitHub 不支持命令行传图（<code>gh pr edit --attach</code>），Agent 全程自动化闭环：</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="box">
+          <span class="icon">📝</span>
+          <span class="title-sm">1. 按模板建 PR</span>
+          <span class="muted-sm">填齐改动范围、测试结果与状态矩阵；导出图绝不塞进代码库。</span>
+        </div>
+        <div class="box accent">
+          <span class="icon">🌐</span>
+          <span class="title-sm">2. 浏览器贴进正文</span>
+          <span class="muted-sm">打开合规网页端编辑框，把三栏对比图直接挂进 PR 正文（不刷屏评论区）。</span>
+        </div>
+        <div class="box green">
+          <span class="icon">🔬</span>
+          <span class="title-sm">3. 重新打开验像素</span>
+          <span class="muted-sm">逐张检查加载成功、比例未变形、解码像素与本地原图一致。</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 07: 双 Agent 独立评审 -->
+    <section class="slide">
+      <div>
+        <div class="kicker">Independent Review · 权责分离</div>
+        <h2>写代码的不管审，审代码的不能改</h2>
+      </div>
+
+      <div class="grid-3" style="align-items:center;">
+        <div class="box">
+          <span class="icon">👷</span>
+          <span class="title-sm">主实现 Agent</span>
+          <div class="pills"><span class="pill">写代码 &amp; 跑测试</span><span class="pill">提 PR &amp; 贴证据图</span></div>
+        </div>
+
+        <div class="box accent" style="text-align:center;">
+          <span class="icon">📦</span>
+          <span class="title-sm">Pull Request</span>
+          <span class="muted-sm" style="font-family:monospace;">锁定精确 Commit SHA</span>
+        </div>
+
+        <div class="box green">
+          <span class="icon">🕵️</span>
+          <span class="title-sm">独立评审子 Agent</span>
+          <div class="pills">
+            <span class="pill green">调用 pr-review</span>
+            <span class="pill">代码严格只读</span>
+            <span class="pill rose">只发评论 · 绝不自己点 Approve</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 08: 人机边界 -->
+    <section class="slide">
+      <div>
+        <div class="kicker">Governance · 人机分工</div>
+        <h2>机器把苦力做满，人类握紧最后三把钥匙</h2>
+      </div>
+
+      <div class="grid-2">
+        <div class="box green">
+          <span class="title-sm">🤖 Agent 自动搞定</span>
+          <div class="pills" style="margin-top:8px;">
+            <span class="pill green">✓ 建分支 &amp; 写 Compose 组件</span>
+            <span class="pill green">✓ 真机测试 + 宿主截图</span>
+            <span class="pill green">✓ 像素对比 &amp; 自动纠偏</span>
+            <span class="pill green">✓ 网页贴图验真 &amp; 独立初审</span>
+          </div>
+        </div>
+
+        <div class="box amber">
+          <span class="title-sm">👤 人类保留最终决定权</span>
+          <div class="pills" style="margin-top:8px;">
+            <span class="pill amber">🔑 澄清模糊需求与设计决策</span>
+            <span class="pill amber">🔑 授权是否录制新快照基线</span>
+            <span class="pill amber">🔑 最终设计签收与 PR 合入</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="dock">
+    <button class="btn" id="prevBtn" onclick="step(-1)">← 上一页</button>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div class="dots" id="dots"></div>
+      <span id="cnt" style="font-size:12px;font-weight:800;color:var(--muted);font-family:monospace;">01 / 08</span>
+    </div>
+    <button class="btn" id="nextBtn" onclick="step(1)">下一页 →</button>
+  </footer>
+</div>
+
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  const dots = document.getElementById('dots');
+  const app = document.getElementById('app');
+  let cur = 0;
+
+  const phases = [
+    ['01 · 读取精确 Figma 节点并建 story/ 分支', '拒绝模糊整库链接；不动本地无关代码；改旧组件前先截旧图留底。', 'figma-tools · git'],
+    ['02 · 实现真实 Compose 组件、预览与 KDoc', '保持 API 兼容；覆盖无障碍、RTL、长文本、大字号与深浅主题。', 'Compose · KDoc'],
+    ['03 · 跑通 Android 真机测试与宿主快照', '切换 JDK 17 + SDK 35；跑真机交互与构建检查；基线录制单独授权。', 'androidTest · Paparazzi'],
+    ['04 · 逐个状态生成三栏像素对比图', '并排展示 Figma 原稿、Paparazzi 渲染与放大差异图，严禁拉伸裁剪。', 'visual-compare'],
+    ['05 · 自动定位根因并迭代修复视觉偏差', '复用设计 Token 修根因并复查兄弟状态；连续 2 轮无改善自动停手求助。', 'Max 2-Pass Loop'],
+    ['06 · 创建标准 PR 并用浏览器贴图验真', '通过企业版 GitHub 网页把对比图贴进正文，重新打开校验比例与解码像素。', 'GHES Browser UI'],
+    ['07 · 唤醒独立子 Agent 完成只读代码评审', '针对同一 Commit 自动发布客观评审意见，绝不自己审批通过。', 'pr-review Subagent']
+  ];
+
+  function pick(i) {
+    document.querySelectorAll('.node-btn').forEach((b, k) => b.classList.toggle('sel', k === i));
+    document.getElementById('pTitle').textContent = phases[i][0];
+    document.getElementById('pDesc').textContent = phases[i][1];
+    document.getElementById('pTool').textContent = phases[i][2];
+  }
+
+  function setDiff(fixed) {
+    document.getElementById('vBtn0').classList.toggle('active', !fixed);
+    document.getElementById('vBtn1').classList.toggle('active', fixed);
+    document.getElementById('curPill').style.transform = fixed ? 'none' : 'translateX(-10px)';
+    const ct = document.getElementById('curTag');
+    ct.textContent = fixed ? '位置完全对齐' : '开关左偏 8px';
+    ct.className = fixed ? 'pill green' : 'pill amber';
+    const db = document.getElementById('diffBox');
+    db.className = fixed ? 'box green' : 'box rose';
+    const dp = document.getElementById('diffPill');
+    dp.style.border = fixed ? '2px solid #34d399' : '2px dashed #fb7185';
+    dp.style.color = fixed ? '#34d399' : '#fb7185';
+    dp.innerHTML = fixed ? '<span>✓ 轮廓完全重合</span>' : '<span>轮廓错位报警</span>';
+    const dt = document.getElementById('diffTag');
+    dt.textContent = fixed ? '0px 差异 · 已闭环' : '检出差异 #V-01';
+    dt.className = fixed ? 'pill green' : 'pill rose';
+  }
+
+  function render() {
+    dots.innerHTML = '';
+    slides.forEach((_, i) => {
+      const b = document.createElement('button');
+      b.className = 'dot' + (i === cur ? ' active' : '');
+      b.onclick = () => go(i);
+      dots.appendChild(b);
+    });
+    document.getElementById('cnt').textContent = `0${cur + 1} / 0${slides.length}`;
+    document.getElementById('prevBtn').disabled = cur === 0;
+    document.getElementById('nextBtn').disabled = cur === slides.length - 1;
+  }
+
+  function go(n) {
+    cur = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, i) => s.classList.toggle('active', i === cur));
+    render();
+  }
+  function step(d) { go(cur + d); }
+  function toggleTheme() {
+    const next = app.dataset.theme === 'dark' ? 'light' : 'dark';
+    app.dataset.theme = next;
+    document.getElementById('themeBtn').textContent = next === 'dark' ? '浅色模式' : '深色模式';
+  }
+  window.addEventListener('keydown', e => {
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); step(1); }
+    if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); step(-1); }
+  });
+  render();
+</script>
+</body>
+</html>
